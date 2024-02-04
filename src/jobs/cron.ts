@@ -1,9 +1,10 @@
 import cron, { schedule } from 'node-cron';
 import fs from 'fs';
 import path from 'path';
+import { jobType } from '../models/types';
 
 
-export function cronJ(jobs: any): void {
+export function cronJ(jobs: jobType[]): void {
     for (let ik = 0; ik < jobs.length; ik++) {
         const element = jobs[ik];
         const filePath = path.join(__dirname, element.path);
@@ -13,10 +14,8 @@ export function cronJ(jobs: any): void {
                     console.error('Erro ao ler o arquivo:', err);
                     return;
                 }
-            
                 // Cria uma nova função a partir do conteúdo do arquivo
                 const newFunction = new Function(data);
-            
                 // Executa a função criada
                 newFunction();
             });
