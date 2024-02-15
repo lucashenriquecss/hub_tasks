@@ -1,6 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db/sequelize';
-console.log(sequelize)
+import Execution from './execLoggerModel';
+import Job from './JobModel';
 
 class Logger extends Model {
   public id!: number;
@@ -25,10 +26,12 @@ Logger.init(
     status: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    job: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      validate: {
+        isIn: {
+          args: [['error', 'info', 'success','finished']], // Lista das palavras permitidas
+          msg: 'O status do log deve ser error, info, success ou finished"', // Mensagem de erro personalizada
+        },
+      },
     },
     data: {
         type: DataTypes.JSON,
@@ -44,5 +47,8 @@ Logger.init(
     modelName: 'Loggers',
   }
 );
-// console.log(sequelize)
+
+Logger.belongsTo(Execution, { foreignKey: 'exec_id' });
+Logger.belongsTo(Job, { foreignKey: 'job_id' });
+
 export default Logger;

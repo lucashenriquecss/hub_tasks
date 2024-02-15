@@ -10,20 +10,41 @@ interface StatusError extends Error{
 
 export function errorHandlerSequelize(err: Error, req: Request, res: Response, next: NextFunction) {
     if (err instanceof UniqueConstraintError) {
-        return res.status(400).json({ error: 'Registro duplicado no banco de dados.' });
+        return res.status(400).json({
+            status:400,
+            message: err.message,
+            description: 'Registro duplicado no banco de dados.',
+            stack: err.stack,
+        });
     }
     
     if (err instanceof ValidationError) {
-        return res.status(400).json({ error: 'Erro de validação dos dados.' });
+        return res.status(400).json({ 
+            status:400,
+            message: err.message,
+            description: 'Erro de validação dos dados.',
+            stack: err.stack,
+       
+        });
     }
 
     if (err instanceof DatabaseError) {
-        return res.status(500).json({ error: 'Erro interno do banco de dados.' });
+        return res.status(500).json({ 
+            status:400,
+            message: err.message,
+            description: 'Erro interno do banco de dados.',
+            stack: err.stack,
+        });
     }
 
     // Caso contrário, trata como um erro interno do servidor
     console.error('Erro interno do servidor:', err);
-    return res.status(500).json({ error: 'Erro interno do servidor.' });
+    return res.status(500).json({ 
+        status:400,
+        message: err.message,
+        description: 'Erro interno do servidor.',
+        stack: err.stack,
+    });
 }
 
 
@@ -38,8 +59,8 @@ export const globalErrorHandler = (error:StatusError,req:Request,res:Response, n
     console.log(error.message);
     res.status(error['status'] || 500).json({
       status: error.status,
+      message: error.message,
       description: error.name,
       stack: error.stack,
-      message: error.message
     })
   }

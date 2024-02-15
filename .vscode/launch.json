@@ -4,8 +4,8 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Debug Express with ts-node-dev",
-      "runtimeArgs": ["-r", "ts-node/register"],
+      "name": "TS",
+      "runtimeArgs": ["-r", "ts-node/register","--inspect-brk"],
       "args": ["src/app.ts"],
       "restart": true,
       "protocol": "inspector",

@@ -1,24 +1,29 @@
+import Job from "../models/JobModel";
+import Execution from "../models/execLoggerModel";
 import Logger from "../models/loggerModel";
 
 type loggerType  = {
     description: string,
     status : string,
-    job: string,
-    data?: JSON,
+    job_id: number,
+    exec_id: number,
+    data?: any,
     attach: string,
 }
 class LoggerRepository extends Logger {
 
      async addSuccess(
             description: string,
-            job: string,
-            data: JSON,
+            job_id: number,
+            exec_id: number,
+            data: any,
             attach: string
         ){
             const body:loggerType = {
                 description,
                 status:'success',
-                job,
+                job_id,
+                exec_id,
                 data,
                 attach
             } 
@@ -27,14 +32,16 @@ class LoggerRepository extends Logger {
 
         async addError(
             description: string,
-            job: string,
-            data: JSON,
+            job_id: number,
+            exec_id: number,
+            data: any,
             attach: string
         ){
             const body:loggerType = {
                 description,
                 status:'error',
-                job,
+                job_id,
+                exec_id,
                 data,
                 attach
             } 
@@ -42,34 +49,44 @@ class LoggerRepository extends Logger {
     }
     async addInfo(
         description: string,
-        job: string,
-        data: JSON,
+        job_id: number,
+        exec_id: number,
+        data: any,
         attach: string
     ){
         const body:loggerType = {
             description,
             status:'info',
-            job,
+            job_id,
+            exec_id,
             data: data || {},
             attach
         } 
-    await Logger.create(body);
+        await Logger.create(body);
     }
     async addCompleted(
         description: string,
-        job: string,
-        data: JSON,
+        job_id: number,
+        exec_id: number,
+        data: any,
         attach: string
     ){
-        const body:loggerType = {
-            description,
-            status:'completed',
-            job,
-            data,
-            attach
-        } 
-        await Logger.create(body);
+        try {
+            const body:loggerType = {
+                description,
+                status:'finished',
+                job_id,
+                exec_id,
+                data,
+                attach
+            } 
+            await Logger.create(body);
+            await Job.update({status:'finished'},{where:{id:job_id}});
+            await Execution.update({status:'finished',finish_time:new Date()},{where:{id:exec_id}})
+        } catch (error) {
+            // next(error);
         }
+    }
 }
 
 
