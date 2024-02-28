@@ -1,29 +1,20 @@
-(async (log,job_id,exec_id) => {
+const context = JSON.parse(process.argv[2]);
+(async () => {
     try {
         // debugger;
         
         // Defina uma função assíncrona para usar await
-        console.log('inicando teste 10s');
+        console.log(context);
 
         for (let index = 0; index < 30; index++) {
             console.log(index)     
         }
 
-            await log.addInfo('teste10', job_id, exec_id, {
-                teste: "dsdsd"
-            }, "");
-            console.log('teste 10');
-        
-    
-        // Chame a função assíncrona
-        await log.addCompleted('completo', job_id, exec_id, {
-            teste: "dsdsd"
-        }, "");
-        console.log('terminando 10');
+     
 
     } catch (error) {
         console.error(error);
     }
 
 
-})(log ,job_id,exec_id); //variaveis em contextto global
+})(); //variaveis em contextto global
